@@ -32,22 +32,23 @@ class Product(models.Model):
 
 
 class Order(models.Model):
-    customer = models.ForeignKey(Customer, on_delete=models.SET_NULL, null=True)
+    customer = models.ForeignKey(Customer, null=True, on_delete=models.CASCADE)
     date_created = models.DateTimeField(auto_now_add=True, null=True)
     complete = models.BooleanField(default=False, null=True, blank=True)
     transaction_id = models.CharField(max_length=100, null=True)
 
     @property
     def get_cart_total(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.get_total for item in orderitems])
+        order_items = self.orderitem_set.all()
+        total = sum([item.get_total for item in order_items])
         return total
 
     @property
     def get_cart_items(self):
-        orderitems = self.orderitem_set.all()
-        total = sum([item.quantity for item in orderitems])
+        order_items = self.orderitem_set.all()
+        total = sum([item.quantity for item in order_items])
         return total
+
 
 class OrderItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.SET_NULL, null=True)
@@ -61,9 +62,7 @@ class OrderItem(models.Model):
         return total
 
 
-
-
-class ShippingAdress(models.Model):
+class ShippingAddress(models.Model):
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
     order = models.ForeignKey(Order, null=True, on_delete=models.SET_NULL)
     address = models.CharField(max_length=250, null=True, blank=True)
